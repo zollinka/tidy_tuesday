@@ -44,9 +44,9 @@ forest_gr_f %>% ggplot(aes(x = reorder(entity, -net_forest_conversion,sum), y = 
 # 2
 brazil <- tuesdata$brazil_loss
 brazil_longer <- tidyr::pivot_longer(brazil, cols = commercial_crops : small_scale_clearing, names_to = 'cause', values_to = 'forest_loss')
-my_colors <- c('yellow', 'red', 'blue', 'black', 'lightgreen', 'lightblue', 'brown', 'gray', 'green', 'lightyellow', 'orange')
+#my_colors <- c('yellow', 'red', 'blue', 'black', 'lightgreen', 'lightblue', 'brown', 'gray', 'green', 'lightyellow', 'orange')
 brazil_longer %>% ggplot(aes(x = year, y = forest_loss, fill = reorder(cause, forest_loss), label = cause)) +
-  geom_stream(type = 'proportional', bw = 0.8)+
+  geom_stream(type = 'ridge', bw = 0.8)+
   ylab("Forest loss [ha]") +
   xlab("Year")+
   guides(fill=guide_legend(title = 'Cause:'))+
@@ -68,6 +68,7 @@ brazil_longer %>% ggplot(aes(x = year, y = forest_loss, fill = cause, label = ca
   scale_x_continuous(expand = c(0.02,0.02))
 
 # 3
+forest_percent <- tuesdata$forest_area
 forest_percent %>%
   filter(year == 1992 | year == 2020) %>%
   tidyr::pivot_wider(names_from = year, names_prefix = "year_", values_from = forest_area)-> f_wider
@@ -117,17 +118,4 @@ plot_more5 + annotation_custom(ggplotGrob(subplot_less5), xmin = 10, xmax = 21, 
   
 
   
-  
-# 4
-forest_p <- forest_percent
-forest_p$continent <- countrycode(sourcevar = forest_p$entity, origin = "country.name", destination = "continent")
-forest_p %>% filter(!is.na(continent)) -> f_4
-| entity %in% c('Africa', 'Asia', 
-                                  'Europe', 
-                                  'Oceania', 
-                                  'South America', 
-                                  'Northern America')) -> f_4
-
-f_4 %>% ggplot(aes(x = year, y = forest_area, group = entity, color = continent))+
-  geom_line()
 
